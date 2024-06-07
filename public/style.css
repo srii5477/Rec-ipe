@@ -1,0 +1,12 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background: repeating-linear-gradient(to right, #eba330, #f3e762); 
+    color: rgb(249, 76, 24); 
+    margin: 5%;
+}
+.credentials {
+    display: flex;
+    gap: 5%;
+    align-items: center;
+    justify-content: center;
+}
