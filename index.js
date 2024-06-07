@@ -18,6 +18,13 @@ app.set('view engine', 'ejs');
 app.use(cookieParser())
 
 // paste
+const db = new pg.Client({
+    user: "postgres",
+    host: "localhost",
+    database: "world",
+    password: process.env.DB_PW,
+    port: 5432,
+});
 
 
 
@@ -32,7 +39,7 @@ app.post('/login', async (req, res) => {
         const user = result.rows[0];
         let validate = await bcrypt.compare(password, user.password);
         if(validate){
-            const token = jwt.sign({ id: user.id, username: user.username }, SECRET_TOKEN, { expiresIn: '2h' });
+            const token = jwt.sign({ id: user.id, username: user.username }, process.env.SECRET_TOKEN, { expiresIn: '2h' });
             res.cookie('token', token, { httpOnly: true });
             msg = `You are logged in as ${username}`;
             res.redirect('/');
@@ -88,7 +95,7 @@ const authenticate = function auth (req, res, next) {
 
 //paste
 
-const llamaAPI = new LlamaAI(API_KEY);
+const llamaAPI = new LlamaAI(process.env.API_KEY);
 
 app.get("/recommend", async (req, res) => {
     
