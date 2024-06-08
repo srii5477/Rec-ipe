@@ -1,4 +1,4 @@
-## Welcome to the Dynamic Recipe Platform : Rec-ipe! This project provides a beautiful and smooth user experience for food enthusiasts and fitness buffs alike. Users can search for recipes using the RapidAPI, receive improved recommendations with the Llama API, and get fitness and calorie-specific nutrition tips to meet their dietary goals. ##
+## Welcome to the Dynamic Recipe Platform : Rec-ipe! This project provides a beautiful and smooth user experience for food enthusiasts and fitness buffs alike. Users can search for recipes using APIs on RapidAPI, receive improved recommendations with the Llama API, and get fitness and calorie-specific nutrition tips to meet their dietary goals. ##
 ------------------------------------------------------------------------------------------------------
 ## Features ##
 1. Recipe Search
