@@ -1,0 +1,4 @@
+1. Fitness section
+2. recipe card and search functionality
+3. random functionality
+4. ~~prepare DB~~
