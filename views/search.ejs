@@ -9,8 +9,20 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap">
 </head>
 <body>
-    <% if(locals.details) { %>
-         <%= details %> 
+    <% if(locals.arr) { %>
+        <div class="cards" style="display: flex;">
+         <% for(let i=0;i<arr.length;i++) { %>
+            <div class="card" style="width: 18rem;">
+                <img src="<%= arr[i].image_link %>" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title"><%= arr[i].title %></h5>
+                  <p class="card-text"><%= arr[i].ingredients %></p>
+                  <p><%= arr[i].content %></p>
+                  <button type="submit" class="btn btn-outline-warning btn-lg"> Take a look. </button>
+                </div>
+            </div>
+            
+        <% } %>  </div>
     <% } else { %>
         <form action="/" method="GET">
             <h3> Unknown error! </h3>

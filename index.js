@@ -7,6 +7,7 @@ import ejs from "ejs";
 import axios from "axios";
 import cookieParser from "cookie-parser";
 import LlamaAI from "llamaai";
+import XRay from "x-ray";
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -160,19 +161,75 @@ app.get("/search", async (req, res) => {
     console.log(resp);
     let listResponse = []
     for(let i = 0; i < resp.length; i++) {
+        const x = XRay();
         const obj = {
             "title": resp[i].recipe.label,
             "image_link": resp[i].recipe.image,
             "src": resp[i].recipe.source,
-            "ingredients": resp[i].recipe.ingredients,
+            "ingredients": resp[i].recipe.ingredientLines,
             "healthLabels": resp[i].recipe.healthLabels,
             "calories": resp[i].recipe.calories,
             "cuisine": resp[i].recipe.cuisineType,
-            
-
+            "link": resp[i].recipe.url
         }
+        //x(obj.link, 'p', [{ p: '' }]).write('results.json');
+        const options = {
+            method: 'POST',
+            url: 'https://web2meaning.p.rapidapi.com/parse/v2',
+            headers: {
+              'x-rapidapi-key': process.env.RAPIDAPI_KEY,
+              'x-rapidapi-host': 'web2meaning.p.rapidapi.com',
+              'Content-Type': 'application/json'
+            },
+            data: {
+              url: obj.link,
+              params: {
+                domain: true,
+                html: false,
+                links: false,
+                media: {
+                  audios: false,
+                  images: true,
+                  videos: true
+                },
+                metadata: {
+                  author: true,
+                  contentType: true,
+                  date: {
+                    publishedTime: true,
+                    updateTime: true
+                  },
+                  description: true,
+                  favicon: true,
+                  keywords: true,
+                  title: true
+                },
+                request: {
+                  htmlProcessing: 'shallow',
+                  jsRendering: false
+                },
+                text: {
+                  body: true,
+                  cleanBody: false,
+                  fullText: true,
+                  includeLinks: false,
+                  lang: true
+                }
+              }
+            }
+          };
+          
+          try {
+              const response = await axios.request(options);
+              obj['content'] = response.data.text.fullText;
+              console.log(response.data);
+          } catch (error) {
+              console.error(error);
+          }
+          
+        listResponse.push(obj);
     }
-    res.render("search.ejs");
+    res.render("search.ejs", { arr: listResponse });
 
 })
 
