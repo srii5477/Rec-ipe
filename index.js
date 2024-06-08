@@ -7,6 +7,8 @@ import ejs from "ejs";
 import axios from "axios";
 import cookieParser from "cookie-parser";
 import LlamaAI from "llamaai";
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 const port = 3000;
@@ -136,6 +138,42 @@ app.get("/recommend", async (req, res) => {
         console.error(error);
         res.render("index.ejs", { msg: "exception caught!" });
     }
+})
+
+app.get("/search", async (req, res) => {
+    const ingre = req.query.ingredients;
+    const sense = req.query.sensitivities;
+    const diet = req.query.specifics;
+    console.log(process.env.APP_ID);
+    console.log(process.env.APP_KEY);
+    const response = await axios.get("https://api.edamam.com/api/recipes/v2", {
+      params: {
+        q: ingre,
+        app_id: process.env.APP_ID,
+        app_key: process.env.APP_KEY,
+        type: 'public',
+        //health: [sense],
+        
+      }
+    });
+    let resp = response.data.hits;
+    console.log(resp);
+    let listResponse = []
+    for(let i = 0; i < resp.length; i++) {
+        const obj = {
+            "title": resp[i].recipe.label,
+            "image_link": resp[i].recipe.image,
+            "src": resp[i].recipe.source,
+            "ingredients": resp[i].recipe.ingredients,
+            "healthLabels": resp[i].recipe.healthLabels,
+            "calories": resp[i].recipe.calories,
+            "cuisine": resp[i].recipe.cuisineType,
+            
+
+        }
+    }
+    res.render("search.ejs");
+
 })
 
 app.get("/profile", (req, res) => {
