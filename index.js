@@ -7,8 +7,8 @@ import ejs from "ejs";
 import axios from "axios";
 import cookieParser from "cookie-parser";
 import LlamaAI from "llamaai";
-import XRay from "x-ray";
-import dotenv from 'dotenv';
+import Cheerio from "cheerio";
+import dotenv from "dotenv"; //necessary: loads environment variables from .env
 dotenv.config();
 
 const app = express();
@@ -145,6 +145,9 @@ app.get("/search", async (req, res) => {
     const ingre = req.query.ingredients;
     const sense = req.query.sensitivities;
     const diet = req.query.specifics;
+    let arr = [];
+    arr.push(sense);
+    arr.push(diet);
     console.log(process.env.APP_ID);
     console.log(process.env.APP_KEY);
     const response = await axios.get("https://api.edamam.com/api/recipes/v2", {
@@ -153,7 +156,8 @@ app.get("/search", async (req, res) => {
         app_id: process.env.APP_ID,
         app_key: process.env.APP_KEY,
         type: 'public',
-        //health: [sense],
+        random: true
+        //health: arr,
         
       }
     });
@@ -161,7 +165,7 @@ app.get("/search", async (req, res) => {
     console.log(resp);
     let listResponse = []
     for(let i = 0; i < resp.length; i++) {
-        const x = XRay();
+        
         const obj = {
             "title": resp[i].recipe.label,
             "image_link": resp[i].recipe.image,
@@ -170,67 +174,49 @@ app.get("/search", async (req, res) => {
             "healthLabels": resp[i].recipe.healthLabels,
             "calories": resp[i].recipe.calories,
             "cuisine": resp[i].recipe.cuisineType,
-            "link": resp[i].recipe.url
+            "link": resp[i].recipe.url,
+            "tags": resp[i].recipe.tags
+        
+            
         }
-        //x(obj.link, 'p', [{ p: '' }]).write('results.json');
-        const options = {
-            method: 'POST',
-            url: 'https://web2meaning.p.rapidapi.com/parse/v2',
-            headers: {
-              'x-rapidapi-key': process.env.RAPIDAPI_KEY,
-              'x-rapidapi-host': 'web2meaning.p.rapidapi.com',
-              'Content-Type': 'application/json'
-            },
-            data: {
-              url: obj.link,
-              params: {
-                domain: true,
-                html: false,
-                links: false,
-                media: {
-                  audios: false,
-                  images: true,
-                  videos: true
-                },
-                metadata: {
-                  author: true,
-                  contentType: true,
-                  date: {
-                    publishedTime: true,
-                    updateTime: true
-                  },
-                  description: true,
-                  favicon: true,
-                  keywords: true,
-                  title: true
-                },
-                request: {
-                  htmlProcessing: 'shallow',
-                  jsRendering: false
-                },
-                text: {
-                  body: true,
-                  cleanBody: false,
-                  fullText: true,
-                  includeLinks: false,
-                  lang: true
+        console.log("here");
+        var html;
+        try /* incase a website has a super strict firewall */ {
+            html=await axios.get(obj.link);
+            
+            console.log("there");
+            const $=Cheerio.load(html.data);
+            const proc=$('script[type="application/ld+json"]').html();
+        if(proc){
+            const parseData=JSON.parse(proc);
+            if(parseData) {
+                if(parseData['@type']==='Recipe'){
+                    const instruc=parseData.recipeInstructions;
+                    console.log(parseData);
+                    obj['content']=instruc;
                 }
-              }
             }
-          };
-          
-          try {
-              const response = await axios.request(options);
-              obj['content'] = response.data.text.fullText;
-              console.log(response.data);
-          } catch (error) {
-              console.error(error);
-          }
-          
+            else    obj['content']='No content could be extracted from the webpage. We apologize for this convenience.';
+        } else{
+            obj['content']='No content could be extracted from the webpage. We apologize for this convenience.';
+        }
+        } catch(err) {
+            console.error(err);
+            obj['content']='We could not parse this recipe due to strict policies enforced by the website hosting the recipe. We apologize for the inconvenience. Please check out the recipe via the link provided.';
+        }
+        
+        // fallback- use nlp
+        //obj['content']=;
+        obj['string']=JSON.stringify(obj);
         listResponse.push(obj);
     }
     res.render("search.ejs", { arr: listResponse });
 
+})
+
+app.get("/card", (req, res) => {
+    const card = JSON.parse(req.query.inf);
+    res.render("card.ejs", { card: card });
 })
 
 app.get("/profile", (req, res) => {

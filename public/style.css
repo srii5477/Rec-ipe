@@ -16,6 +16,10 @@ button {
     color: rgb(141, 3, 72) !important; 
 }
 
-
+.card {
+    display: box;
+    border: 2px solid violet;
+    margin: 3%;
+}
 
 

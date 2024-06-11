@@ -3,32 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recipe Card</title>
+    <title>Search Recipes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap">
 </head>
 <body>
     <% if(locals.arr) { %>
-        <div class="cards" style="display: flex;">
+        <div class="cards" style="display: grid; grid-template-columns: 1fr 1fr 1fr;">
          <% for(let i=0;i<arr.length;i++) { %>
-            <div class="card" style="width: 18rem;">
+            <div class="card" style="width: 18rem; background-color: transparent;">
+                <form action="/card" method="GET">
                 <img src="<%= arr[i].image_link %>" class="card-img-top" alt="...">
                 <div class="card-body">
                   <h5 class="card-title"><%= arr[i].title %></h5>
-                  <p class="card-text"><%= arr[i].ingredients %></p>
-                  <p><%= arr[i].content %></p>
+                  <!-- <p class="card-text" style="font-size: 13px;"><%= arr[i].ingredients %>.....</p> -->
+                  <% if(arr[i].content) { %>
+                    <p><%= arr[i].content %>.....</p>
+                  <% } %>
+                  
+                  <input type="hidden" name="inf" id="inf" value="<%= arr[i].string %>"/>
                   <button type="submit" class="btn btn-outline-warning btn-lg"> Take a look. </button>
+                  </form>
                 </div>
             </div>
             
-        <% } %>  </div>
+        <% } %>  
+        <form action="/" method="GET">
+            <h3> You've reached the end. </h3>
+            <button type="submit" class="btn btn-outline-warning btn-lg"> Take me back. </button>
+        </form>
+    </div>
     <% } else { %>
         <form action="/" method="GET">
             <h3> Unknown error! </h3>
-            
+            <button type="submit" class="btn btn-outline-warning btn-lg"> Take me back. </button>
         </form>
     <% } %>
-    <button type="submit" class="btn btn-outline-warning btn-lg"> Take me back. </button>
+    
 </body>
 </html>
