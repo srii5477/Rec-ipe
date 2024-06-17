@@ -16,13 +16,19 @@
             <ul class="cards">
               <li class="cards_item">
                 <div class="card">
-                  <div class="card_image"><img src="<%= card.image_link %>" alt="<%= card.title %>"></div>
+                  <div class="card_image"><img src="<%= card.image_link %>" alt="<%= card.title %>" height="200px" width="200px"></div>
                   <div class="card_content">
                     <h1 class="card_title"><%= card.title %></h1>
                     <p> <h4> Ingredients: </h4> <%= card.ingredients %> </p>
                     <div class="card_text">
-                      <p> <h4> Method of Preparation: </h4> <%= card.content %> </p>
-                    </div>
+                        <h4> Method of Preparation: </h4> 
+                        <% if(card.content) { %> 
+                          <% for(let i=0;i<card.content.length;i++) { %>
+                              <p> <%= card.content[i].text %> </p>
+                          <% } %>
+                        <% } %>
+                        
+                    </div> 
                     <h4> Source of this recipe: </h4> <p><%= card.src %></p>
                     <h4> Health Labels: </h4> <p><%= card.healthLabels %></p>
                     <h4> Cuisine Type: </h4> <p><%= card.cuisine %></p>
