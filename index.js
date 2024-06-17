@@ -225,7 +225,7 @@ app.get("/search", async (req, res) => {
 			if (flag == 1) {
 				let words = nlp($);
 				words.verbs().isImperative();
-				console.log(words.text());
+				obj["content"] = words.text();
 			}
 		} catch (err) {
 			console.error(err);

@@ -2,7 +2,7 @@ body {
     font-family: 'Poppins', sans-serif;
     background: repeating-linear-gradient(to right, #ebc30f, #df6add); 
     color: rgb(141, 3, 72); 
-    margin: 8%;
+    margin: 5%;
 }
 .credentials {
     display: flex;
@@ -10,6 +10,17 @@ body {
     margin-left:-5%;
     align-items: center;
     justify-content: center;
+}
+.images {
+    display: flex;
+    justify-content: space-between;
+}
+img {
+    height: 600px;
+    width: 1250px;
+    opacity: 0.08;
+    position: fixed;
+    z-index: -100;
 }
 
 button {

@@ -1,3 +1,4 @@
 1. image links are broken
-2. fitness section
-3. login stuff, middleware
+2. fallback
+3. fitness section
+4. login stuff, middleware

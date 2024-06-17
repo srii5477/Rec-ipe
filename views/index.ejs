@@ -10,6 +10,9 @@
         <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
      </head>
      <body>
+      <div class="images" style="margin-top: 0%;">
+        <img src="fruits.jpg" style="margin-left: -5%; margin-right: 2%; margin-top: 0%;">
+      </div>
         <hr>
         <div class="credentials" style="margin-bottom: 4%;">
             <header>
@@ -28,11 +31,16 @@
                 <button type="submit" class="btn btn-outline-warning btn-lg" >Log-out</button>
             </form>
         </div>
+        
         <% if(locals.msg) { %>
             <h4> Dear Rec-ipe User: <%= msg %></h4>
         <% } %>
         <hr> <br> <br>
+        
         <div class="body" style="margin-left: 20%;">
+          <div class="images" style="margin-top: 0%;">
+            <img src="fruits.jpg" style="margin-left: -23%; margin-right: 10%;">
+          </div>
         <div class="redirect" data-aos="slide-left" style="display:block; ">
            <h2> Search for a Recipe </h2>
            <form action="/search" method="GET">
@@ -94,6 +102,7 @@
                 <button type="submit" class="btn btn-outline-warning btn-lg"> Spice up my dish </button>
             </form>
         </div>
+        
         </div>
         <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
