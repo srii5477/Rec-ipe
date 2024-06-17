@@ -129,4 +129,4 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-.konbert-export-4d068ff3d9744.sql
+*.sql
