@@ -10,6 +10,7 @@ import LlamaAI from "llamaai";
 import Cheerio from "cheerio";
 import dotenv from "dotenv"; //necessary: loads environment variables from .env
 import fs from "fs";
+import nlp from "compromise";
 dotenv.config();
 
 const app = express();
@@ -33,6 +34,7 @@ const db = new pg.Client({
 db.connect();
 
 var msg = "";
+
 
 app.post("/login", async (req, res) => {
 	const { username, password } = req.body;
@@ -180,22 +182,24 @@ app.get("/search", async (req, res) => {
 	// });
 	//console.log(resp);
 	let listResponse = [];
-	let respInit = await db.query("SELECT * FROM recipes WHERE recipe.label LIKE '%blueberry%'");
+	let respInit = await db.query("SELECT * FROM recipes WHERE label LIKE '%Strawberry%' OR label LIKE 'Strawberry%' OR label LIKE '%Strawberry' OR label LIKE '%strawberry%' LIMIT 10");
 	let resp = respInit.rows;
 	for (let i = 0; i < resp.length; i++) {
+	
 		const obj = {
-			title: resp[i].recipe.label,
-			image_link: resp[i].recipe.image,
-			src: resp[i].recipe.source,
-			ingredients: resp[i].recipe.ingredientLines,
-			healthLabels: resp[i].recipe.healthLabels,
-			calories: resp[i].recipe.calories,
-			cuisine: resp[i].recipe.cuisineType,
-			link: resp[i].recipe.url,
-			tags: resp[i].recipe.tags,
+			title: resp[i].label,
+			image_link: resp[i].img_url,
+			src: resp[i].source,
+			ingredients: resp[i].ingredientLines,
+			healthLabels: resp[i].healthLabels,
+			calories: resp[i].calories,
+			cuisine: resp[i].cuisineType,
+			link: resp[i].url,
+			tags: resp[i].tags,
 		};
 		//console.log("here");
 		var html;
+		let flag = 0;
 		try /* incase a website has a super strict firewall */ {
 			html = await axios.get(obj.link);
 			//console.log("there");
@@ -210,20 +214,30 @@ app.get("/search", async (req, res) => {
 						obj["content"] = instruc;
 					}
 				} else {
-					obj["content"] = ["No content could be extracted from the webpage. We apologize for this convenience."];
+					// obj["content"] = ["No content could be extracted from the webpage. We apologize for this convenience."];
+					flag = 1;
 				}
 			} else {
-				obj["content"] =
-					["No content could be extracted from the webpage. We apologize for this convenience."];
+				// obj["content"] =
+				// 	["No content could be extracted from the webpage. We apologize for this convenience."];
+				flag = 1;
+			}
+			if (flag == 1) {
+				let words = nlp($);
+				words.verbs().isImperative();
+				console.log(words.text());
 			}
 		} catch (err) {
 			console.error(err);
 			obj["content"] =
 				["We could not parse this recipe due to strict policies enforced by the website hosting the recipe. We apologize for the inconvenience. Please check out the recipe via the link provided."];
+			// flag = 1;
 		}
 
 		// fallback- use nlp
 		//obj['content']=;
+
+		
 		obj["string"] = JSON.stringify(obj);
 		listResponse.push(obj);
 	}
@@ -251,7 +265,24 @@ app.get("/logindirect", (req, res) => {
 	res.render("loginpage.ejs");
 });
 
-app.get("/random", (req, res) => {});
+app.get("/random", async (req, res) => {
+	let dat = await db.query("SELECT * FROM recipes;");
+	dat = dat.rows;
+	let i = Math.floor(Math.random() * dat.length);
+	const obj = {
+		title: dat[i].label,
+		image_link: dat[i].img_url,
+		src: dat[i].source,
+		ingredients: dat[i].ingredientLines,
+		healthLabels: dat[i].healthLabels,
+		calories: dat[i].calories,
+		cuisine: dat[i].cuisineType,
+		link: dat[i].url,
+		tags: dat[i].tags,
+	};
+	obj['content']=[];
+	res.render("card.ejs", {card: obj});
+});
 
 app.listen(3000, () => {
 	console.log("server is up and listening on port 3000.");

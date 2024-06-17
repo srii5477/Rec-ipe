@@ -1,4 +1,3 @@
-1. Fitness section
-2. recipe card and search functionality
-3. random functionality
-4. ~~prepare DB~~
+1. image links are broken
+2. fitness section
+3. login stuff, middleware
