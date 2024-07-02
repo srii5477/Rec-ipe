@@ -12,8 +12,6 @@
 
     Llama API Integration: Get personalized recipe recommendations based on your search history and preferences.
 
-3. Nutrition Tips
-
-    Fitness Goals: Receive tips tailored to your fitness goals, whether you want to lose weight, build muscle or maintain a healthy lifestyle.
+3. Nutritional Awareness
 
     Calorie Tracking: Detailed nutritional information and calorie-specific tips help users manage their dietary intake.
