@@ -19,7 +19,7 @@
                   <h5 class="card-title"><%= arr[i].title %></h5>
                   <!-- <p class="card-text" style="font-size: 13px;"><%= arr[i].ingredients %>.....</p> -->
                   
-                  <input type="hidden" name="inf" id="inf" value="<%= arr[i].string %>"/>
+                  <input type="hidden" name="inf" id="inf" value="<%= JSON.stringify(arr[i]) %>"/>
                   <button type="submit" class="btn btn-outline-warning btn-lg"> Take a look. </button>
                   </form>
                 </div>

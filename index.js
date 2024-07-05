@@ -159,25 +159,7 @@ app.get("/search", async (req, res) => {
 	// let arr = [];
 	// arr.push(sense);
 	// arr.push(diet);
-	const response = await axios.get("https://api.edamam.com/api/recipes/v2", {
-		params: {
-			q: "chocolate",
-			app_id: process.env.APP_ID,
-			app_key: process.env.APP_KEY,
-			type: "public",
-			random: true,
-			//health: arr,
-		},
-	});
-	let rp = response.data.hits;
-	var dat = fs.readFileSync("results.json");
-	var myObj = JSON.parse(dat);
-	myObj.push(rp);
-	var newDat = JSON.stringify(myObj);
-	fs.writeFile("results.json", newDat, (err) => {
-  		if (err) throw err;
-		console.log("New data added");
-	});
+	
 	let listResponse = [];
 	let respInit = await db.query("SELECT * FROM recipes WHERE label LIKE $1", ['%'+req.query.ingredients+'%']);
 	let resp = respInit.rows;
@@ -216,7 +198,15 @@ app.get("/signupdirect", (req, res) => {
 	res.render("signuppage.ejs");
 });
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
+	let result = await db.query("SELECT label FROM recipes WHERE image LIKE 'https://edamam%';");
+	if(result.rows){
+		for (let i = 0; i < result.rows.length; i++) {
+			let q=await axios.get(`https://api.pexels.com/v1/search?query=${encodeURIComponent(result.rows[i].label)}`, {headers: {'Authorization': process.env.PEXEL_KEY}});
+			await db.query("UPDATE recipes SET image=$1 WHERE label LIKE $2", [q.data.photos[0].src.original, result.rows[i].label]);
+		}
+	}
+	
 	res.render("index.ejs", { msg: msg });
 });
 
