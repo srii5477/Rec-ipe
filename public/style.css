@@ -11,20 +11,15 @@ body {
     align-items: center;
     justify-content: center;
 }
-.images {
-    display: flex;
-    justify-content: space-between;
-}
-img {
-    height: 600px;
-    width: 1250px;
-    opacity: 0.08;
-    position: fixed;
-    z-index: -100;
-}
+
 
 button {
     color: rgb(141, 3, 72) !important; 
+}
+
+img {
+    height: 300px;
+    width: 440px;
 }
 
 .card {

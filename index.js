@@ -159,36 +159,33 @@ app.get("/search", async (req, res) => {
 	// let arr = [];
 	// arr.push(sense);
 	// arr.push(diet);
-	console.log(process.env.APP_ID);
-	console.log(process.env.APP_KEY);
-	// const response = await axios.get("https://api.edamam.com/api/recipes/v2", {
-	// 	params: {
-	// 		q: ingre,
-	// 		app_id: process.env.APP_ID,
-	// 		app_key: process.env.APP_KEY,
-	// 		type: "public",
-	// 		random: true,
-	// 		//health: arr,
-	// 	},
-	// });
-	// let resp = response.data.hits;
-	// var dat = fs.readFileSync("results.json");
-	// var myObj = JSON.parse(dat);
-	// myObj.push(resp);
-	// var newDat = JSON.stringify(myObj);
-	// fs.writeFile("results.json", newDat, (err) => {
-  	// 	if (err) throw err;
-	// 	console.log("New data added");
-	// });
-	//console.log(resp);
+	const response = await axios.get("https://api.edamam.com/api/recipes/v2", {
+		params: {
+			q: "chocolate",
+			app_id: process.env.APP_ID,
+			app_key: process.env.APP_KEY,
+			type: "public",
+			random: true,
+			//health: arr,
+		},
+	});
+	let rp = response.data.hits;
+	var dat = fs.readFileSync("results.json");
+	var myObj = JSON.parse(dat);
+	myObj.push(rp);
+	var newDat = JSON.stringify(myObj);
+	fs.writeFile("results.json", newDat, (err) => {
+  		if (err) throw err;
+		console.log("New data added");
+	});
 	let listResponse = [];
-	let respInit = await db.query("SELECT * FROM recipes WHERE label LIKE '%Strawberry%' OR label LIKE 'Strawberry%' OR label LIKE '%Strawberry' OR label LIKE '%strawberry%' LIMIT 10");
+	let respInit = await db.query("SELECT * FROM recipes WHERE label LIKE $1", ['%'+req.query.ingredients+'%']);
 	let resp = respInit.rows;
 	for (let i = 0; i < resp.length; i++) {
-	
+	    
 		const obj = {
 			title: resp[i].label,
-			image_link: resp[i].img_url,
+			image_link: resp[i].image,
 			src: resp[i].source,
 			ingredients: resp[i].ingredientLines,
 			healthLabels: resp[i].healthLabels,
@@ -197,48 +194,10 @@ app.get("/search", async (req, res) => {
 			link: resp[i].url,
 			tags: resp[i].tags,
 		};
+
+		  //await db.query("UPDATE recipes SET image=$1 WHERE label LIKE $2;", [obj.image_link, obj.title]);
 		//console.log("here");
-		var html;
-		let flag = 0;
-		try /* incase a website has a super strict firewall */ {
-			html = await axios.get(obj.link);
-			//console.log("there");
-			const $ = Cheerio.load(html.data);
-			const proc = $('script[type="application/ld+json"]').html();
-			if (proc) {
-				const parseData = JSON.parse(proc);
-				if (parseData) {
-					if (parseData["@type"] === "Recipe") {
-						const instruc = parseData.recipeInstructions;
-						console.log(parseData);
-						obj["content"] = instruc;
-					}
-				} else {
-					// obj["content"] = ["No content could be extracted from the webpage. We apologize for this convenience."];
-					flag = 1;
-				}
-			} else {
-				// obj["content"] =
-				// 	["No content could be extracted from the webpage. We apologize for this convenience."];
-				flag = 1;
-			}
-			if (flag == 1) {
-				let words = nlp($);
-				words.verbs().isImperative();
-				obj["content"] = words.text();
-			}
-		} catch (err) {
-			console.error(err);
-			obj["content"] =
-				["We could not parse this recipe due to strict policies enforced by the website hosting the recipe. We apologize for the inconvenience. Please check out the recipe via the link provided."];
-			// flag = 1;
-		}
-
-		// fallback- use nlp
-		//obj['content']=;
-
 		
-		obj["string"] = JSON.stringify(obj);
 		listResponse.push(obj);
 	}
 	res.render("search.ejs", { arr: listResponse });
