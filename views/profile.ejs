@@ -5,18 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile Page</title>
     <link href="style.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="profile" style="display: flex;">
+        <div class="content">
+        <h1 style="font-size: 40px;"> Profile Page </h1>
     <% if (locals.profile) { %>
-        <h3> <%= profile.username %> </h3>
-        <ul>
+        
+        <h2> Your username: <em> <%= profile.username %> </em> </h2>
+        <h3 style="font-size: 23px;"> Your saved recipes: </h3>
+        <ul style="font-size: 18px;">
         <% for(let i = 0; i < profile.likes.length; i++) { %>
             <li> <%= profile.likes[i] %> </li>
         <% } %>
         </ul>
+    </div>
+        <div class="img" style="margin-left: 20%; display: block;">
+            <img src="png.png" style="background-color: transparent;"/>
+            <label for="img">Select image:</label>
+            <input type="file" id="img" name="img" accept="image/*">
+            <input type="submit">
+        </div>
     <% } else { %>
         <h5>Log-in / Sign-up to get access to more features.</h5>
     <% } %>
+     
+    </div>
+    <div class="rec">
+        <form action="/suggest" method="POST">
+            <input type="hidden" name="hidden" value="<%= profile.likes %>">
+            <button type="submit" class="btn btn-outline-warning btn-lg"> See stuff that you may like ! </button>
+        </form>
+        <% if(locals.list) { %>
+            <% for(let i = 0; i < list.length; i++) { %>
+                <div class="card-format">
+                    <h5>Name: <%= list[i].title %></h5>
+                    <h5>Ingredients: <%= list[i].ingredients %></h5>
+                    <h5>Calories: <%= list[i].calories %></h5>
+                    <h5>Health Labels: <%= list[i].healthLabels %></h5>
+                    <form action="/card" method="GET">
+                        <input type="hidden" name="inf" id="inf" value="<%= JSON.stringify(list[i]) %>"/>
+                        <button type="submit" class="btn btn-outline-warning btn-lg">Take a look.</button>
+                    </form>
+                </div>
+            <% } %>
+        <% } %>
+
+    </div>
 </body>
 </html>

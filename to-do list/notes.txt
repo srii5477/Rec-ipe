@@ -3,3 +3,4 @@
 3. calories and fitness stuff
 4. convert to react app
 5. homepage and profile page design ✔
+6. recipe recommendations on profile page.

@@ -268,6 +268,11 @@ app.get("/random", async (req, res) => {
 	res.render("card.ejs", {card: obj});
 });
 
+app.post("/suggest", async (req, res) => {
+	const arr = req.query.hidden;
+	
+})
+
 app.listen(3000, () => {
 	console.log("server is up and listening on port 3000.");
 });

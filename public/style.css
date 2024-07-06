@@ -22,10 +22,30 @@ img {
     width: 440px;
 }
 
+.img img {
+    height: 300px;
+    width: 350px;
+}
+
+.card-format {
+    display: box;
+    height: 60%;
+    width: 60%;
+    border: 1px solid rgb(100, 14, 100);
+}
+
 .card {
     display: box;
     border: 2px solid violet;
     margin: 3%;
 }
 
+.profile {
+    display: box;
+    border: 2px solid rgb(145, 3, 114);
+    padding: 5%;
+    gap: 5%;
+    font-family: 'Montserrat', sans-serif;
+    color: rgb(145, 3, 114);
+}
 
