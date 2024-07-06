@@ -91,17 +91,24 @@ app.post("/signup", async (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
+	if(!req.headers.cookie)	{
+		msg = "You are not logged in.";
+		return res.redirect("/");
+	}
+	let token = req.headers.cookie.split("=")[1];
+	const decoded = jwt.verify(token, process.env.SECRET_TOKEN);
+	console.log(decoded.username);
 	res.clearCookie("token");
 	msg = "You have been logged out.";
 	res.redirect("/");
 });
 
 const authenticate = function auth(req, res, next) {
-	console.log(req.cookies);
-	const token = req.cookies.token;
-	if (typeof token == undefined) return res.redirect("/login");
-
-	jwt.verify(token, SECRET_TOKEN, (err, user) => {
+	console.log(req.headers.cookie);
+	
+	if (req.headers.cookie === undefined) return res.redirect("/login");
+	const token = req.headers.cookie.token;
+	jwt.verify(token, process.env.SECRET_TOKEN, (err, user) => {
 		if (err) return res.redirect("/login");
 		req.user = user;
 		next();
@@ -125,12 +132,12 @@ app.get("/recommend", async (req, res) => {
 					type: "object",
 					properties: {
 						additional_ingredients: {
-							type: "string",
+							type: "object",
 							description:
 								"Some additions to the recipe which can enhance its taste and nutrition.",
 						},
 						final_recipe: {
-							type: "string",
+							type: "object",
 							description:
 								"A description of the updated recipe with the extra ingredients.",
 						},
@@ -144,8 +151,8 @@ app.get("/recommend", async (req, res) => {
 	};
 	try {
 		const response = await llamaAPI.run(apiRequestJson);
-		console.log(response.choices[0].message.function_call.arguments);
-		res.render("rec.ejs", { msg: response.choices[0].message.function_call });
+		//console.log(response.choices[0].message.function_call.arguments);
+		res.render("rec.ejs", { msg: response.choices[0].message.function_call.arguments });
 	} catch (error) {
 		console.error(error);
 		res.render("index.ejs", { msg: "exception caught!" });
@@ -186,13 +193,47 @@ app.get("/search", async (req, res) => {
 	res.render("search.ejs", { arr: listResponse });
 });
 
+app.post("/like", async (req, res) => {
+	if (!req.headers.cookie) {
+		msg = "Make an account or log in if you already have one, to save recipes to your profile.";
+		return res.render("index.ejs", {msg: msg});
+	}
+	let token = req.headers.cookie.split("=")[1];
+	
+	const decoded = jwt.verify(token, process.env.SECRET_TOKEN);
+	console.log(decoded.username);
+	const arr = []
+	arr.push(req.body.hidden)
+	await db.query("UPDATE users SET likes = likes || $1 WHERE username LIKE $2", [arr, decoded.username]);
+	res.render("card.ejs", { card: JSON.parse(req.body.card), alert: "Successfully saved to your profile! "});
+})
+
 app.get("/card", (req, res) => {
 	const card = JSON.parse(req.query.inf);
 	res.render("card.ejs", { card: card });
 });
 
-app.get("/profile", (req, res) => {
-	res.render("profile.ejs");
+app.get("/profile", async (req, res) => {
+	if(!req.headers.cookie)	{
+		msg = "Login / Signup to access your personal profile.";
+		return res.render("index.ejs", {msg: msg});
+	}
+	let token = req.headers.cookie.split("=")[1];
+	if (token) {
+		const decoded = jwt.verify(token, process.env.SECRET_TOKEN);
+		const results = await db.query("SELECT likes FROM users WHERE username LIKE $1;", [decoded.username]);
+		console.log(results.rows);
+		const profile = {
+			username: decoded.username,
+			likes: results.rows[0].likes
+			
+		};
+		res.render("profile.ejs", { profile: profile });
+	} else {
+		res.render("profile.ejs");
+	}
+	
+	
 });
 
 app.get("/signupdirect", (req, res) => {

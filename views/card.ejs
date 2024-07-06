@@ -17,7 +17,7 @@
               <li class="cards_item">
                 <div class="card">
                   <div class="card_image" style="height: 400px; width: 600px;"><img src="<%= card.image_link %>" alt="<%= card.title %>" height="600px" width="100px"></div>
-                  <div class="card_content">
+                  <div class="card_content" style="color: rgb(131, 2, 73);">
                     <h1 class="card_title"><%= card.title %></h1>
                     <p> <h4> Ingredients: </h4> <%= card.ingredients %> </p>
 
@@ -26,11 +26,20 @@
                     <h4> Cuisine Type: </h4> <p><%= card.cuisine %></p>
                     <h4> Calories: </h4> <p><%= card.calories %></p>
                     <h4> Tags: </h4> <p><%= card.tags %></p>
-                  </div>
+                    <form action="/like" method="POST">
+                      <input type="hidden" name="hidden" value="<%= card.title %>">
+                      <input type="hidden" name="card" value="<%= JSON.stringify(card) %>">
+                      <button type="submit" class="btn btn-outline-light"><h4>❤️ Add to my profile</h4></button>
+                    </form>
+                    <% if(locals.alert) { %>
+                      <%= alert %>
+                    <% } %>
+                    </div>
                 </div>
               </li>
           
             </ul>
+            
           </div>
         <form action="/" method="GET">
             <h3> You've reached the end. </h3>
@@ -38,7 +47,7 @@
         </form>
     <% } else { %>
     <form action="/" method="GET">
-        <h3> Unknown error! </h3>
+        <h3> Unknown error. </h3>
         <button type="submit" class="btn btn-outline-warning btn-lg"> Take me back. </button>
     </form>
     <% } %>

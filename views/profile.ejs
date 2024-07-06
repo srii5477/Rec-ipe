@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <link href="style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap">
+</head>
+<body>
+    <% if (locals.profile) { %>
+        <h3> <%= profile.username %> </h3>
+        <ul>
+        <% for(let i = 0; i < profile.likes.length; i++) { %>
+            <li> <%= profile.likes[i] %> </li>
+        <% } %>
+        </ul>
+    <% } else { %>
+        <h5>Log-in / Sign-up to get access to more features.</h5>
+    <% } %>
+</body>
+</html>
