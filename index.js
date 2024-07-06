@@ -269,8 +269,54 @@ app.get("/random", async (req, res) => {
 });
 
 app.post("/suggest", async (req, res) => {
-	const arr = req.query.hidden;
 	
+	const arr = req.body.hidden;
+	// arr = ['brioche', 'cake', 'tart', 'rice', 'rice'];
+	let str = "";
+	for (let word of arr) {
+		str += word;
+	}
+	let words = str.split(/\s/);
+	let count = {};
+	for (let word of words) {
+		if (count[word])	count[word]++;
+		else	count[word] = 1;
+	}
+	let max = 0;
+	let mostFreq = "";
+	let prohibited = ["a", "the", "A", "The", "so", "and", "And"];
+	for (let word of words) {
+		if (count[word] > max && !(word in prohibited)) {
+			max = count[word];
+			mostFreq = word;
+		}
+	}
+	if ( mostFreq === undefined || mostFreq === null || mostFreq === "") {
+		return res.render("profile.ejs", {profile: {username: req.body.user, likes: req.body.hidden}, list: {}});
+	}
+
+	let results = await db.query("SELECT FROM recipes WHERE label LIKE $1", ['%'+mostFreq+'%']);
+	// what if there is no match?
+	let records = results.rows;
+	console.log(mostFreq);
+	let list = [];
+	for(let i = 0; i < records.length; i++) {
+		const obj = {
+			title: records[i].label,
+			image_link: records[i].image,
+			src: records[i].source,
+			ingredients: records[i].ingredientLines,
+			healthLabels: records[i].healthLabels,
+			calories: records[i].calories,
+			cuisine: records[i].cuisineType,
+			link: records[i].url,
+			tags: records[i].tags,
+		};
+		list.push(obj);
+	}
+	res.render("profile.ejs", {profile: {username: req.body.user, likes: req.body.hidden}, list: list});
+
+
 })
 
 app.listen(3000, () => {

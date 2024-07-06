@@ -1,6 +1,6 @@
 1. profile feature ✔
 2. login signup stuff ✔
 3. calories and fitness stuff
-4. convert to react app
-5. homepage and profile page design ✔
+4. convert to react app (future task)
+5. homepage and profile page design 
 6. recipe recommendations on profile page.

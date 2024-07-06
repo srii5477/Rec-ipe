@@ -34,6 +34,7 @@
     </div>
     <div class="rec">
         <form action="/suggest" method="POST">
+            <input type="hidden" name="user" value="<%= profile.username %>">
             <input type="hidden" name="hidden" value="<%= profile.likes %>">
             <button type="submit" class="btn btn-outline-warning btn-lg"> See stuff that you may like ! </button>
         </form>
