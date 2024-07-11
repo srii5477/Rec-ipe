@@ -19,14 +19,16 @@
                     <h2>Your username: <em><%= profile.username %></em></h2>
                     <h3>Your saved recipes:</h3>
                     <ul class="saved-recipes">
+                        <% if(locals.profile.likes) { %>
                         <% for (let i = 0; i < profile.likes.length; i++) { %>
                             <li><%= profile.likes[i] %></li>
+                        <% } %>
                         <% } %>
                     </ul>
                 </section>
                 <section class="profile-image">
                     <img src="png.png" id="output" alt="Profile Image"/>
-                    <input type="file" id="img" name="img" accept="image/*" onchange="loadFile(event)">
+                    <input type="file" id="img" name="img" accept="image/*" onchange="loadFile(event)" style="margin-left: 4%;">
                 </section>
             <% } else { %>
                 <h5 class="login-prompt">Log-in / Sign-up to get access to more features.</h5>

@@ -4,24 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recommendations</title>
-    <link href="style.css" rel="stylesheet">
+    <link href="rec.css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap">
-    <style>
-        body {
-            background-image: url('robot-7768527_1280.jpg');
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-size: cover;
-            color: rgb(246, 137, 78);
-            font-size: 25px;
-
-        }
-    </style>
 </head>
 <body>  
-    <% if(locals.msg) { %>
-        <%= msg %>
-    <% } %>
-    
+    <div class="container">
+        <% if(locals.msg) { %>
+            <div class="message">
+                <%= msg %>
+            </div>
+        <% } %>
+    </div>
 </body>
 </html>

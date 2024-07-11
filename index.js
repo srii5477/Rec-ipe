@@ -294,14 +294,15 @@ app.post("/suggest", async (req, res) => {
 	if ( mostFreq === undefined || mostFreq === null || mostFreq === "") {
 		return res.render("profile.ejs", {profile: {username: req.body.user, likes: req.body.hidden}, list: {}});
 	}
-
+	mostFreq = mostFreq.replace(/"/g, "");
+	mostFreq = mostFreq.replace(/\[/g, "");
 	let results = await db.query("SELECT * FROM recipes WHERE label LIKE $1", ['%'+mostFreq+'%']);
 	// what if there is no match?
 	let records = results.rows;
 	console.log(mostFreq);
 	console.log(records);
 	let list = [];
-	for(let i = 0; i < 5; i++) {
+	for(let i = 0; i < 5 && i < records.length; i++) {
 		const obj = {
 			title: records[i].label,
 			image_link: records[i].image,
