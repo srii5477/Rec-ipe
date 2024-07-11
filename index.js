@@ -295,12 +295,13 @@ app.post("/suggest", async (req, res) => {
 		return res.render("profile.ejs", {profile: {username: req.body.user, likes: req.body.hidden}, list: {}});
 	}
 
-	let results = await db.query("SELECT FROM recipes WHERE label LIKE $1", ['%'+mostFreq+'%']);
+	let results = await db.query("SELECT * FROM recipes WHERE label LIKE $1", ['%'+mostFreq+'%']);
 	// what if there is no match?
 	let records = results.rows;
 	console.log(mostFreq);
+	console.log(records);
 	let list = [];
-	for(let i = 0; i < records.length; i++) {
+	for(let i = 0; i < 5; i++) {
 		const obj = {
 			title: records[i].label,
 			image_link: records[i].image,
@@ -314,7 +315,12 @@ app.post("/suggest", async (req, res) => {
 		};
 		list.push(obj);
 	}
-	res.render("profile.ejs", {profile: {username: req.body.user, likes: req.body.hidden}, list: list});
+	let listOfLikes = req.body.hidden;
+	if (typeof listOfLikes === "string") {
+		listOfLikes = listOfLikes.split(',');
+	}
+	
+	res.render("profile.ejs", {profile: {username: req.body.user, likes: listOfLikes}, list: list});
 
 
 })

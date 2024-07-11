@@ -22,10 +22,9 @@
         </ul>
     </div>
         <div class="img" style="margin-left: 20%; display: block;">
-            <img src="png.png" style="background-color: transparent;"/>
-            <label for="img">Select image:</label>
-            <input type="file" id="img" name="img" accept="image/*">
-            <input type="submit">
+            <img src="png.png" id="output" style="background-color: transparent;"/>
+            <!-- <label for="img">Select image:</label> -->
+            <input type="file" id="img" name="img" accept="image/*" onchange="loadFile(event)">
         </div>
     <% } else { %>
         <h5>Log-in / Sign-up to get access to more features.</h5>
@@ -35,11 +34,12 @@
     <div class="rec">
         <form action="/suggest" method="POST">
             <input type="hidden" name="user" value="<%= profile.username %>">
-            <input type="hidden" name="hidden" value="<%= profile.likes %>">
+            <input type="hidden" name="hidden" value="<%= JSON.stringify(profile.likes) %>">
             <button type="submit" class="btn btn-outline-warning btn-lg"> See stuff that you may like ! </button>
         </form>
         <% if(locals.list) { %>
             <% for(let i = 0; i < list.length; i++) { %>
+                <div class="flexcard" style="display: flex; ">
                 <div class="card-format">
                     <h5>Name: <%= list[i].title %></h5>
                     <h5>Ingredients: <%= list[i].ingredients %></h5>
@@ -50,9 +50,17 @@
                         <button type="submit" class="btn btn-outline-warning btn-lg">Take a look.</button>
                     </form>
                 </div>
+                <div><img src="<%= list[i].image_link %>" height="30px" width="80px" /></div>
+                </div>
             <% } %>
         <% } %>
 
     </div>
+    <script>
+        function loadFile(event) {
+            let image = document.getElementById('output');
+            image.src = URL.createObjectURL(event.target.files[0]);
+        }
+    </script>
 </body>
 </html>
