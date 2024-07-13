@@ -9,15 +9,18 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap">
 </head>
 <body>
+    <div class="form">
     <form action="/signup" method="POST">
-        <input type="text" name="username" placeholder="Username"/>
-        <input type="password" class="req" name="password" placeholder="Password" />
-        <input type="password" name="repassword" placeholder="Re-enter your password." />
-        <% if (locals.wrning) { %>
-            <h4><%= wrning %></h4>
-        <% } %>
-        <button type="submit" class="btn btn-outline-success btn-lg" >Submit</button>
+        <div>Username: <input type="text" name="username" placeholder="Username"/></div>
+        <div>Password: <input type="password" class="req" name="password" placeholder="Password" /></div>
+        <div> Re-enter password: <input type="password" name="repassword" placeholder="Re-enter your password." /></div>
+        <div style="margin-left: 10%; color: rgb(194, 1, 1);">
+            <% if (locals.wrning) { %>
+                <h5><%= wrning %></h5>
+            <% } %>
+        </div>
+        <button type="submit" class="btn btn-outline-success btn-lg" style="margin-left: 10%;" >Submit</button>
     </form>
-    
+    </div>
 </body>
 </html>

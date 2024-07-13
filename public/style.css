@@ -49,3 +49,48 @@ img {
     color: rgb(145, 3, 114);
 }
 
+.footer-section {
+    font-weight: 100;
+    font-size: 30px;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 10%;
+}
+
+.fa-instagram {
+    color: rgb(175, 5, 73);
+}
+
+.fa-github {
+    color: rgb(108, 6, 108);
+}
+
+.fa-linkedin {
+    color: rgb(86, 74, 167);
+}
+
+.fa { 
+    
+    padding: 2px; 
+    width: 100px; 
+    text-decoration: none; 
+    /* margin: 5px 80px;  */
+} 
+
+.form {
+    display: block;
+    box-shadow: 0 4px 8px rgba(217, 2, 167, 0.788);
+    margin: 10%;
+    font-size: 20px;
+}
+
+.form div {
+    margin: 10%;
+}
+
+.display {
+    box-shadow: 0 1px 1px rgba(228, 57, 151, 0.788);
+}
