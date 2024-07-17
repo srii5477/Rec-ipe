@@ -24,11 +24,10 @@ app.use(cookieParser());
 
 // paste
 const db = new pg.Client({
-	user: "postgres",
-	host: "localhost",
-	database: "world",
-	password: process.env.DB_PW,
-	port: 5432,
+	connectionString: process.env.DEPLOYED_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
 
 db.connect();
