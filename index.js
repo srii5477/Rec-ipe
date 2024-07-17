@@ -96,14 +96,12 @@ app.post("/logout", (req, res) => {
 	}
 	let token = req.headers.cookie.split("=")[1];
 	const decoded = jwt.verify(token, process.env.SECRET_TOKEN);
-	console.log(decoded.username);
 	res.clearCookie("token");
 	msg = "You have been logged out.";
 	res.redirect("/");
 });
 
 const authenticate = function auth(req, res, next) {
-	console.log(req.headers.cookie);
 	
 	if (req.headers.cookie === undefined) return res.redirect("/login");
 	const token = req.headers.cookie.token;
@@ -200,7 +198,6 @@ app.post("/like", async (req, res) => {
 	let token = req.headers.cookie.split("=")[1];
 	
 	const decoded = jwt.verify(token, process.env.SECRET_TOKEN);
-	console.log(decoded.username);
 	const arr = []
 	arr.push(req.body.hidden)
 	await db.query("UPDATE users SET likes = likes || $1 WHERE username LIKE $2", [arr, decoded.username]);
@@ -240,8 +237,9 @@ app.get("/signupdirect", (req, res) => {
 });
 
 app.get("/", async (req, res) => {
-	
-	res.render("index.ejs", { msg: msg });
+	let temp = msg;
+	msg = "";
+	res.render("index.ejs", { msg: temp });
 });
 
 app.get("/logindirect", (req, res) => {
@@ -298,8 +296,6 @@ app.post("/suggest", async (req, res) => {
 	let results = await db.query("SELECT * FROM recipes WHERE label LIKE $1", ['%'+mostFreq+'%']);
 	// what if there is no match?
 	let records = results.rows;
-	console.log(mostFreq);
-	console.log(records);
 	let list = [];
 	for(let i = 0; i < 5 && i < records.length; i++) {
 		const obj = {
